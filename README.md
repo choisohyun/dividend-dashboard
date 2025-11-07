@@ -1,36 +1,174 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 배당 대시보드 (Dividend Dashboard)
 
-## Getting Started
+개인 배당 투자를 추적하고 분석하는 웹 애플리케이션입니다.
 
-First, run the development server:
+## 🎯 주요 기능
 
+- **월별 현금흐름 가시화**: 배당 수령 내역을 월별로 확인
+- **목표 달성 추적**: 목표 월 배당(₩900,000) 대비 진행률 모니터링
+- **투자 루틴 체크**: 월별 입금 목표(₩2,000,000) 준수율 확인
+- **보유 자산 관리**: 종목별 보유 현황 및 섹터 분석
+- **CSV 데이터 임포트**: 증권사 거래내역 쉽게 업로드
+
+## 🚀 시작하기
+
+### 필수 조건
+
+- Node.js 20+
+- pnpm (또는 npm/yarn)
+- Supabase 계정
+
+### 설치
+
+1. 저장소 클론
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd dividend-dashboard
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. 의존성 설치
+```bash
+pnpm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. 환경 변수 설정
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`.env.local` 파일을 열고 Supabase 프로젝트 정보를 입력하세요:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+DATABASE_URL=postgresql://postgres:password@db.your-project.supabase.co:5432/postgres
+```
 
-## Learn More
+4. 데이터베이스 마이그레이션
+```bash
+pnpm drizzle-kit generate
+pnpm drizzle-kit migrate
+```
 
-To learn more about Next.js, take a look at the following resources:
+Supabase SQL Editor에서 `supabase/policies.sql`을 실행하여 RLS 정책을 설정하세요.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. 개발 서버 시작
+```bash
+pnpm dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 확인하세요.
 
-## Deploy on Vercel
+## 📁 프로젝트 구조
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+dividend-dashboard/
+├── src/
+│   ├── app/                    # Next.js App Router 페이지
+│   │   ├── (auth)/            # 인증 페이지 (로그인/회원가입)
+│   │   └── (dashboard)/       # 대시보드 페이지
+│   ├── components/            # React 컴포넌트
+│   │   ├── auth/             # 인증 관련 컴포넌트
+│   │   ├── dashboard/        # 대시보드 컴포넌트
+│   │   ├── layout/           # 레이아웃 컴포넌트
+│   │   └── ui/               # shadcn/ui 컴포넌트
+│   ├── lib/                   # 유틸리티 라이브러리
+│   │   ├── auth/             # 인증 헬퍼
+│   │   ├── calculations/     # 계산 로직
+│   │   ├── db/               # Drizzle ORM 스키마
+│   │   ├── format/           # 포맷팅 유틸리티
+│   │   ├── providers/        # React Provider
+│   │   ├── store/            # Zustand 상태 관리
+│   │   └── supabase/         # Supabase 클라이언트
+│   ├── hooks/                 # 커스텀 React Hooks
+│   └── types/                 # TypeScript 타입 정의
+├── drizzle/                   # 데이터베이스 마이그레이션
+├── supabase/                  # Supabase 설정 파일
+└── public/                    # 정적 파일
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🛠 기술 스택
+
+- **프레임워크**: Next.js 16 (App Router)
+- **언어**: TypeScript
+- **데이터베이스**: Supabase (PostgreSQL)
+- **ORM**: Drizzle ORM
+- **인증**: Supabase Auth
+- **상태 관리**: 
+  - React Query (서버 상태)
+  - Zustand (클라이언트 상태)
+- **UI**: 
+  - Tailwind CSS
+  - shadcn/ui
+- **차트**: Recharts
+- **배포**: Vercel
+
+## 📊 데이터 모델
+
+### 주요 테이블
+
+- `users`: 사용자 정보 및 목표 설정
+- `holdings`: 현재 보유 종목
+- `transactions`: 매수/매도 거래 내역
+- `dividends`: 배당 수령 내역
+- `cash_flows`: 입출금 내역
+- `symbol_meta`: 종목 메타데이터 (섹터, 배당 일정)
+
+자세한 내용은 [SETUP.md](./SETUP.md)를 참조하세요.
+
+## 📥 CSV 임포트 가이드
+
+### 거래내역 (transactions.csv)
+```csv
+trade_date,symbol,side,quantity,price,fee_tax
+2025-01-05,KOSEF_배당,BUY,10,11250,0
+```
+
+### 배당내역 (dividends.csv)
+```csv
+pay_date,symbol,gross_amount,withholding_tax,net_amount
+2025-03-15,KOSEF_배당,3400,340,3060
+```
+
+### 입금내역 (cash_flows.csv)
+```csv
+date,amount,memo
+2025-01-02,2000000,월 정기입금
+```
+
+## 🗓 개발 로드맵
+
+### ✅ Week 1 (Foundation) - 완료
+- [x] 데이터베이스 스키마 및 마이그레이션
+- [x] 인증 시스템
+- [x] 대시보드 레이아웃
+- [x] KPI 카드 (placeholder)
+
+### 🚧 Week 2 (Data & Charts)
+- [ ] CSV 업로드 기능
+- [ ] 월별 배당 차트
+- [ ] 배당 달력 히트맵
+- [ ] 보유현황 테이블
+
+### 📅 Week 3 (Reports & Features)
+- [ ] 주간/월간 리포트 생성
+- [ ] 목표 진행률 게이지
+- [ ] 섹터 분석 도넛 차트
+- [ ] 입금 루틴 타임라인
+
+### 🎯 Week 4 (Polish & Deploy)
+- [ ] 구글 시트 연동 (읽기)
+- [ ] 설정 페이지 기능
+- [ ] E2E 테스트
+- [ ] 프로덕션 배포
+
+## 🤝 기여하기
+
+이 프로젝트는 개인 프로젝트이지만, 이슈와 제안은 환영합니다!
+
+## 📄 라이선스
+
+MIT License
+
+## 💡 지원
+
+문제가 발생하면 [SETUP.md](./SETUP.md)의 트러블슈팅 섹션을 확인하세요.
