@@ -45,7 +45,7 @@ export function SignupForm() {
     }
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -54,7 +54,18 @@ export function SignupForm() {
     });
 
     if (error) {
-      setError(error.message);
+      // Handle specific error cases
+      if (error.message.includes("already registered")) {
+        setError("이미 가입된 이메일입니다. 로그인해주세요.");
+      } else if (error.message.includes("email")) {
+        setError("유효하지 않은 이메일 주소입니다.");
+      } else {
+        setError(error.message);
+      }
+      setLoading(false);
+    } else if (data.user && data.user.identities && data.user.identities.length === 0) {
+      // User already exists (Supabase returns empty identities array)
+      setError("이미 가입된 이메일입니다. 로그인해주세요.");
       setLoading(false);
     } else {
       setSuccess(true);
@@ -123,8 +134,15 @@ export function SignupForm() {
             />
           </div>
           {error && (
-            <div className="text-sm text-red-600 bg-red-50 p-3 rounded">
+            <div className="text-sm text-red-600 bg-red-50 p-3 rounded border border-red-200">
               {error}
+              {error.includes("이미 가입된") && (
+                <div className="mt-2">
+                  <a href="/login" className="font-medium underline hover:text-red-700">
+                    로그인 페이지로 이동 →
+                  </a>
+                </div>
+              )}
             </div>
           )}
           <Button type="submit" className="w-full" disabled={loading}>
