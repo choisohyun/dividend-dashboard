@@ -1,6 +1,7 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { requireAuth } from "@/lib/auth/session";
 import { QueryProvider } from "@/lib/providers/QueryProvider";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 
 export default async function Layout({
   children,
@@ -10,9 +11,11 @@ export default async function Layout({
   await requireAuth();
 
   return (
-    <QueryProvider>
-      <DashboardLayout>{children}</DashboardLayout>
-    </QueryProvider>
+    <ErrorBoundary>
+      <QueryProvider>
+        <DashboardLayout>{children}</DashboardLayout>
+      </QueryProvider>
+    </ErrorBoundary>
   );
 }
 

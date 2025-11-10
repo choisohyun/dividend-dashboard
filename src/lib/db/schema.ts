@@ -8,7 +8,7 @@ import {
   timestamp,
   smallint,
 } from "drizzle-orm/pg-core";
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 
 // Users table
 export const users = pgTable("users", {
