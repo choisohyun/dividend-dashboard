@@ -17,8 +17,10 @@ export function WelcomeDialog() {
 
   useEffect(() => {
     // Check if user has seen welcome dialog
-    const hasSeenWelcome = localStorage.getItem("dividend-dashboard-welcome-seen");
-    
+    const hasSeenWelcome = localStorage.getItem(
+      "dividend-dashboard-welcome-seen"
+    );
+
     if (!hasSeenWelcome) {
       // Show after a brief delay
       const timer = setTimeout(() => setOpen(true), 1000);
@@ -38,9 +40,7 @@ export function WelcomeDialog() {
           <DialogTitle className="text-2xl">
             배당 대시보드에 오신 것을 환영합니다! 🎉
           </DialogTitle>
-          <DialogDescription>
-            3단계로 시작하는 배당 투자 추적
-          </DialogDescription>
+          <DialogDescription>3단계로 시작하는 배당 투자 추적</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
@@ -89,15 +89,8 @@ export function WelcomeDialog() {
             <p className="text-sm text-blue-800 mb-3">
               샘플 데이터로 시작하고 싶으신가요?
             </p>
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-              className="w-full"
-            >
-              <Link href="/import">
-                데이터 임포트 페이지로 이동
-              </Link>
+            <Button variant="outline" size="sm" asChild className="w-full">
+              <Link href="/import">데이터 임포트 페이지로 이동</Link>
             </Button>
           </div>
         </div>
@@ -117,4 +110,3 @@ export function WelcomeDialog() {
     </Dialog>
   );
 }
-

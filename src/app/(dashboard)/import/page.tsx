@@ -19,7 +19,11 @@ import {
   type ColumnMapping,
   type CsvParseResult,
 } from "@/lib/csv/parser";
-import { importTransactions, importDividends, importCashFlows } from "@/app/actions/import";
+import {
+  importTransactions,
+  importDividends,
+  importCashFlows,
+} from "@/app/actions/import";
 
 type ImportType = "transactions" | "dividends" | "cashflows";
 
@@ -29,12 +33,28 @@ export default function ImportPage() {
   const [headers, setHeaders] = useState<string[]>([]);
   const [previewData, setPreviewData] = useState<string[][]>([]);
   const [mapping, setMapping] = useState<ColumnMapping>({});
-  const [parseResult, setParseResult] = useState<CsvParseResult<any> | null>(null);
+  const [parseResult, setParseResult] = useState<CsvParseResult<any> | null>(
+    null
+  );
   const [isUploading, setIsUploading] = useState(false);
 
   const columnMappings = {
-    transactions: ["trade_date", "symbol", "side", "quantity", "price", "fee_tax"],
-    dividends: ["pay_date", "symbol", "ex_date", "gross_amount", "withholding_tax", "net_amount"],
+    transactions: [
+      "trade_date",
+      "symbol",
+      "side",
+      "quantity",
+      "price",
+      "fee_tax",
+    ],
+    dividends: [
+      "pay_date",
+      "symbol",
+      "ex_date",
+      "gross_amount",
+      "withholding_tax",
+      "net_amount",
+    ],
     cashflows: ["date", "amount", "memo"],
   };
 
@@ -68,7 +88,7 @@ export default function ImportPage() {
       const content = await readCsvFile(selectedFile);
       const rows = parseCsvContent(content);
       const csvHeaders = extractHeaders(rows);
-      
+
       setHeaders(csvHeaders);
       setPreviewData(rows.slice(1));
       setMapping(defaultMappings[activeTab]);
@@ -93,7 +113,7 @@ export default function ImportPage() {
       const rows = parseCsvContent(content);
 
       let result: CsvParseResult<any>;
-      
+
       if (activeTab === "transactions") {
         result = mapCsvToObjects(rows, mapping, validateTransactionRow);
         if (result.data.length > 0) {
@@ -114,7 +134,10 @@ export default function ImportPage() {
       setParseResult(result);
     } catch (error) {
       console.error("Upload error:", error);
-      alert("업로드 실패: " + (error instanceof Error ? error.message : "알 수 없는 오류"));
+      alert(
+        "업로드 실패: " +
+          (error instanceof Error ? error.message : "알 수 없는 오류")
+      );
     } finally {
       setIsUploading(false);
     }
@@ -123,10 +146,12 @@ export default function ImportPage() {
   const downloadTemplate = (type: ImportType, e?: React.MouseEvent) => {
     e?.preventDefault();
     e?.stopPropagation();
-    
+
     const templates = {
-      transactions: "trade_date,symbol,side,quantity,price,fee_tax\n2025-01-05,KOSEF_배당,BUY,10,11250,0",
-      dividends: "pay_date,symbol,ex_date,gross_amount,withholding_tax,net_amount\n2025-03-15,KOSEF_배당,2025-03-10,3400,340,3060",
+      transactions:
+        "trade_date,symbol,side,quantity,price,fee_tax\n2025-01-05,KOSEF_배당,BUY,10,11250,0",
+      dividends:
+        "pay_date,symbol,ex_date,gross_amount,withholding_tax,net_amount\n2025-03-15,KOSEF_배당,2025-03-10,3400,340,3060",
       cashflows: "date,amount,memo\n2025-01-02,2000000,월 정기입금",
     };
 
@@ -143,16 +168,21 @@ export default function ImportPage() {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">데이터 임포트</h1>
-        <p className="text-gray-600">CSV 파일을 업로드하여 거래/배당/입금 내역 추가</p>
+        <p className="text-gray-600">
+          CSV 파일을 업로드하여 거래/배당/입금 내역 추가
+        </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={(v) => {
-        setActiveTab(v as ImportType);
-        setFile(null);
-        setHeaders([]);
-        setPreviewData([]);
-        setParseResult(null);
-      }}>
+      <Tabs
+        value={activeTab}
+        onValueChange={(v) => {
+          setActiveTab(v as ImportType);
+          setFile(null);
+          setHeaders([]);
+          setPreviewData([]);
+          setParseResult(null);
+        }}
+      >
         <TabsList>
           <TabsTrigger value="transactions">거래내역</TabsTrigger>
           <TabsTrigger value="dividends">배당내역</TabsTrigger>
@@ -179,7 +209,10 @@ export default function ImportPage() {
             <div className="mb-4 text-sm text-gray-600">
               CSV 파일을 업로드하거나 수동으로 데이터를 추가하세요
             </div>
-            <CsvUploader onFileSelect={handleFileSelect} disabled={isUploading} />
+            <CsvUploader
+              onFileSelect={handleFileSelect}
+              disabled={isUploading}
+            />
           </div>
 
           {headers.length > 0 && (
@@ -234,7 +267,10 @@ export default function ImportPage() {
             <div className="mb-4 text-sm text-gray-600">
               CSV 파일을 업로드하거나 수동으로 데이터를 추가하세요
             </div>
-            <CsvUploader onFileSelect={handleFileSelect} disabled={isUploading} />
+            <CsvUploader
+              onFileSelect={handleFileSelect}
+              disabled={isUploading}
+            />
           </div>
 
           {headers.length > 0 && (
@@ -289,7 +325,10 @@ export default function ImportPage() {
             <div className="mb-4 text-sm text-gray-600">
               CSV 파일을 업로드하거나 수동으로 데이터를 추가하세요
             </div>
-            <CsvUploader onFileSelect={handleFileSelect} disabled={isUploading} />
+            <CsvUploader
+              onFileSelect={handleFileSelect}
+              disabled={isUploading}
+            />
           </div>
 
           {headers.length > 0 && (
@@ -327,6 +366,3 @@ export default function ImportPage() {
     </div>
   );
 }
-
-
-

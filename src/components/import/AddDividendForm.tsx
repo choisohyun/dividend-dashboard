@@ -87,6 +87,15 @@ export function AddDividendForm({
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleReset = () => {
+    setSymbol(defaultSymbol || "");
+    setGrossAmount("");
+    setWithholdingTax("");
+    setNetAmount("");
+    setExDate(undefined);
+    setErrors({});
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -105,12 +114,7 @@ export function AddDividendForm({
       });
 
       // Reset form
-      setSymbol(defaultSymbol || "");
-      setGrossAmount("");
-      setWithholdingTax("");
-      setNetAmount("");
-      setExDate(undefined);
-      setErrors({});
+      handleReset();
     } catch (error) {
       console.error("Submit error:", error);
     } finally {
