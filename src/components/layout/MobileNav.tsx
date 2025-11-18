@@ -8,8 +8,7 @@ import {
   PieChart,
   TrendingUp,
   Wallet,
-  Upload,
-  Settings,
+  FileText,
 } from "lucide-react";
 
 const navigation = [
@@ -17,8 +16,7 @@ const navigation = [
   { name: "보유현황", href: "/holdings", icon: PieChart },
   { name: "배당내역", href: "/dividends", icon: TrendingUp },
   { name: "입출금", href: "/cash", icon: Wallet },
-  { name: "데이터 임포트", href: "/import", icon: Upload },
-  { name: "설정", href: "/settings", icon: Settings },
+  { name: "리포트", href: "/reports", icon: FileText },
 ];
 
 export function MobileNav() {
