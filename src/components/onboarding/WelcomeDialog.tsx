@@ -86,12 +86,19 @@ export function WelcomeDialog() {
           {/* Quick Start */}
           <div className="rounded-lg bg-blue-50 p-4 mt-6">
             <p className="text-sm font-medium text-blue-900 mb-2">빠른 시작</p>
-            <p className="text-sm text-blue-800">
-              샘플 데이터로 시작하고 싶으신가요?{" "}
-              <a href="/import" className="underline font-medium">
-                CSV 템플릿 다운로드
-              </a>
+            <p className="text-sm text-blue-800 mb-3">
+              샘플 데이터로 시작하고 싶으신가요?
             </p>
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="w-full"
+            >
+              <Link href="/import">
+                데이터 임포트 페이지로 이동
+              </Link>
+            </Button>
           </div>
         </div>
 
