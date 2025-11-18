@@ -8,7 +8,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  TooltipProps,
 } from "recharts";
 import { formatKRW } from "@/lib/format/currency";
 import type { MonthlyDataPoint } from "@/types";
@@ -18,7 +17,8 @@ interface MonthlyDividendChartProps {
   showGross?: boolean;
 }
 
-function CustomTooltip({ active, payload }: TooltipProps<number, string>) {
+function CustomTooltip(props: any) {
+  const { active, payload } = props;
   if (active && payload && payload.length) {
     return (
       <div className="rounded-lg border bg-white p-3 shadow-lg">

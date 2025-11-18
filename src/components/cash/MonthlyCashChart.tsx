@@ -10,7 +10,6 @@ import {
   ResponsiveContainer,
   Legend,
   ReferenceLine,
-  TooltipProps,
 } from "recharts";
 import { formatKRW } from "@/lib/format/currency";
 import type { CashFlowDataPoint } from "@/types";
@@ -20,7 +19,8 @@ interface MonthlyCashChartProps {
   monthlyTarget?: number;
 }
 
-function CustomTooltip({ active, payload }: TooltipProps<number, string>) {
+function CustomTooltip(props: any) {
+  const { active, payload } = props;
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (

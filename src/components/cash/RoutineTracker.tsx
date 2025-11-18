@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { formatKRW, formatPercentage } from "@/lib/format/currency";
 import { calculateRoutineAdherence, calculateInvestmentStreak } from "@/lib/calculations/routine";
+import { cn } from "@/lib/utils";
 import type { CashFlow } from "@/lib/db/schema";
 
 interface RoutineTrackerProps {

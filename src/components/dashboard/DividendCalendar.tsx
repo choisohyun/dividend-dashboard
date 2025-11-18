@@ -67,8 +67,16 @@ export function DividendCalendar({ data, months = 3 }: DividendCalendarProps) {
   };
 
   // Group days by week
-  const weeks: typeof calendarData.days[][] = [];
-  let currentWeek: typeof calendarData.days[] = [];
+  type DayData = {
+    date: string;
+    amount: number;
+    intensity: number;
+    dayOfWeek: number;
+    monthLabel?: string;
+  };
+  
+  const weeks: DayData[][] = [];
+  let currentWeek: DayData[] = [];
   
   // Pad first week
   if (calendarData.days.length > 0) {

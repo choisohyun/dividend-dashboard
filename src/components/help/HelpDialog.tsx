@@ -20,7 +20,7 @@ interface HelpDialogProps {
 export function HelpDialog({ page = "dashboard" }: HelpDialogProps) {
   const [open, setOpen] = useState(false);
 
-  const helpContent = {
+  const helpContent: Record<string, { title: string; sections: Array<{ title: string; content: string }> }> = {
     dashboard: {
       title: "대시보드 사용법",
       sections: [
@@ -52,6 +52,40 @@ export function HelpDialog({ page = "dashboard" }: HelpDialogProps) {
         {
           title: "YOC (Yield on Cost)",
           content: "매입 원가 대비 배당 수익률입니다. 높을수록 좋은 투자입니다.",
+        },
+      ],
+    },
+    dividends: {
+      title: "배당내역 사용법",
+      sections: [
+        {
+          title: "필터",
+          content: "연도와 월을 선택하여 특정 기간의 배당만 확인할 수 있습니다.",
+        },
+        {
+          title: "세전/세후 토글",
+          content: "세전 금액과 세후 금액을 전환하여 볼 수 있습니다.",
+        },
+        {
+          title: "월별 피벗",
+          content: "종목별 월별 배당을 한눈에 비교할 수 있는 피벗 테이블입니다.",
+        },
+      ],
+    },
+    cash: {
+      title: "입출금 사용법",
+      sections: [
+        {
+          title: "루틴 트래커",
+          content: "이번 달 입금 목표 달성률과 연속 달성 기록을 확인하세요.",
+        },
+        {
+          title: "타임라인",
+          content: "최근 입출금 내역을 시간순으로 확인할 수 있습니다.",
+        },
+        {
+          title: "월별 차트",
+          content: "입금과 출금을 월별로 비교하고 목표선과 비교할 수 있습니다.",
         },
       ],
     },
