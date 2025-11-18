@@ -2,14 +2,39 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { getUserSettings } from "@/app/actions/users";
+import { getAllHoldings } from "@/app/actions/holdings";
+import { getAllDividends } from "@/app/actions/dividends";
+import { getAllCashFlows } from "@/app/actions/cashflows";
+import { getAllTransactions } from "@/app/actions/transactions";
 import { GoalSettings } from "@/components/settings/GoalSettings";
 import { DisplaySettings } from "@/components/settings/DisplaySettings";
 import { AccountInfo } from "@/components/settings/AccountInfo";
+import { DataManagement } from "@/components/settings/DataManagement";
 
 export default function SettingsPage() {
   const { data: settings, isLoading } = useQuery({
     queryKey: ["userSettings"],
     queryFn: getUserSettings,
+  });
+
+  const { data: holdings = [] } = useQuery({
+    queryKey: ["holdings"],
+    queryFn: getAllHoldings,
+  });
+
+  const { data: dividends = [] } = useQuery({
+    queryKey: ["dividends"],
+    queryFn: getAllDividends,
+  });
+
+  const { data: cashFlows = [] } = useQuery({
+    queryKey: ["cashflows"],
+    queryFn: getAllCashFlows,
+  });
+
+  const { data: transactions = [] } = useQuery({
+    queryKey: ["transactions"],
+    queryFn: getAllTransactions,
   });
 
   if (isLoading) {
@@ -52,11 +77,15 @@ export default function SettingsPage() {
       </div>
 
       {/* Data Management */}
-      <div className="mt-6 rounded-lg border border-orange-200 bg-orange-50 p-6">
-        <h3 className="mb-2 font-semibold text-orange-900">데이터 관리</h3>
-        <p className="text-sm text-orange-800">
-          Week 3에서 데이터 백업/복원 기능이 추가될 예정입니다.
-        </p>
+      <div className="mt-6">
+        <DataManagement
+          stats={{
+            holdings: holdings.length,
+            dividends: dividends.length,
+            cashFlows: cashFlows.length,
+            transactions: transactions.length,
+          }}
+        />
       </div>
     </div>
   );
