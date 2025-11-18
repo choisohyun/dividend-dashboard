@@ -119,7 +119,10 @@ export default function ImportPage() {
     }
   };
 
-  const downloadTemplate = (type: ImportType) => {
+  const downloadTemplate = (type: ImportType, e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    
     const templates = {
       transactions: "trade_date,symbol,side,quantity,price,fee_tax\n2025-01-05,KOSEF_배당,BUY,10,11250,0",
       dividends: "pay_date,symbol,ex_date,gross_amount,withholding_tax,net_amount\n2025-03-15,KOSEF_배당,2025-03-10,3400,340,3060",
@@ -162,7 +165,8 @@ export default function ImportPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => downloadTemplate("transactions")}
+                type="button"
+                onClick={(e) => downloadTemplate("transactions", e)}
               >
                 <Download className="mr-2 h-4 w-4" />
                 템플릿 다운로드
@@ -210,7 +214,8 @@ export default function ImportPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => downloadTemplate("dividends")}
+                type="button"
+                onClick={(e) => downloadTemplate("dividends", e)}
               >
                 <Download className="mr-2 h-4 w-4" />
                 템플릿 다운로드
@@ -258,7 +263,8 @@ export default function ImportPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => downloadTemplate("cashflows")}
+                type="button"
+                onClick={(e) => downloadTemplate("cashflows", e)}
               >
                 <Download className="mr-2 h-4 w-4" />
                 템플릿 다운로드
