@@ -7,6 +7,7 @@ import { Download } from "lucide-react";
 import { CsvUploader } from "@/components/import/CsvUploader";
 import { MappingPreview } from "@/components/import/MappingPreview";
 import { UploadProgress } from "@/components/import/UploadProgress";
+import { AddDataDialog } from "@/components/import/AddDataDialog";
 import {
   readCsvFile,
   parseCsvContent,
@@ -161,16 +162,22 @@ export default function ImportPage() {
         <TabsContent value="transactions" className="space-y-6">
           <div className="rounded-lg border bg-white p-6">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-semibold">거래내역 업로드</h3>
-              <Button
-                variant="outline"
-                size="sm"
-                type="button"
-                onClick={(e) => downloadTemplate("transactions", e)}
-              >
-                <Download className="mr-2 h-4 w-4" />
-                템플릿 다운로드
-              </Button>
+              <h3 className="font-semibold">거래내역</h3>
+              <div className="flex gap-2">
+                <AddDataDialog defaultTab="transaction" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                  onClick={(e) => downloadTemplate("transactions", e)}
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  템플릿 다운로드
+                </Button>
+              </div>
+            </div>
+            <div className="mb-4 text-sm text-gray-600">
+              CSV 파일을 업로드하거나 수동으로 데이터를 추가하세요
             </div>
             <CsvUploader onFileSelect={handleFileSelect} disabled={isUploading} />
           </div>
@@ -210,16 +217,22 @@ export default function ImportPage() {
         <TabsContent value="dividends" className="space-y-6">
           <div className="rounded-lg border bg-white p-6">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-semibold">배당내역 업로드</h3>
-              <Button
-                variant="outline"
-                size="sm"
-                type="button"
-                onClick={(e) => downloadTemplate("dividends", e)}
-              >
-                <Download className="mr-2 h-4 w-4" />
-                템플릿 다운로드
-              </Button>
+              <h3 className="font-semibold">배당내역</h3>
+              <div className="flex gap-2">
+                <AddDataDialog defaultTab="dividend" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                  onClick={(e) => downloadTemplate("dividends", e)}
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  템플릿 다운로드
+                </Button>
+              </div>
+            </div>
+            <div className="mb-4 text-sm text-gray-600">
+              CSV 파일을 업로드하거나 수동으로 데이터를 추가하세요
             </div>
             <CsvUploader onFileSelect={handleFileSelect} disabled={isUploading} />
           </div>
@@ -259,16 +272,22 @@ export default function ImportPage() {
         <TabsContent value="cashflows" className="space-y-6">
           <div className="rounded-lg border bg-white p-6">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-semibold">입금내역 업로드</h3>
-              <Button
-                variant="outline"
-                size="sm"
-                type="button"
-                onClick={(e) => downloadTemplate("cashflows", e)}
-              >
-                <Download className="mr-2 h-4 w-4" />
-                템플릿 다운로드
-              </Button>
+              <h3 className="font-semibold">입금내역</h3>
+              <div className="flex gap-2">
+                <AddDataDialog defaultTab="cashflow" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                  onClick={(e) => downloadTemplate("cashflows", e)}
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  템플릿 다운로드
+                </Button>
+              </div>
+            </div>
+            <div className="mb-4 text-sm text-gray-600">
+              CSV 파일을 업로드하거나 수동으로 데이터를 추가하세요
             </div>
             <CsvUploader onFileSelect={handleFileSelect} disabled={isUploading} />
           </div>
