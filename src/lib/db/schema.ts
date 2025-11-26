@@ -7,6 +7,7 @@ import {
   date,
   timestamp,
   smallint,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -20,6 +21,8 @@ export const users = pgTable("users", {
     .notNull()
     .default(900000),
   monthlyInvestPlan: integer("monthly_invest_plan").notNull().default(2000000),
+  autoBackupEnabled: boolean("auto_backup_enabled").notNull().default(false),
+  lastBackupAt: timestamp("last_backup_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

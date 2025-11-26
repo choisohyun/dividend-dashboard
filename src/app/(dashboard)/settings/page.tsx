@@ -10,6 +10,7 @@ import { GoalSettings } from "@/components/settings/GoalSettings";
 import { DisplaySettings } from "@/components/settings/DisplaySettings";
 import { AccountInfo } from "@/components/settings/AccountInfo";
 import { DataManagement } from "@/components/settings/DataManagement";
+import { BackupSettings } from "@/components/settings/BackupSettings";
 
 export default function SettingsPage() {
   const { data: settings, isLoading } = useQuery({
@@ -69,6 +70,14 @@ export default function SettingsPage() {
           currency={settings?.currency || "KRW"}
           timezone={settings?.timezone || "Asia/Seoul"}
         />
+
+        {/* Backup Settings */}
+        <div className="lg:col-span-2">
+          <BackupSettings
+            autoBackupEnabled={settings?.autoBackupEnabled || false}
+            lastBackupAt={settings?.lastBackupAt ? new Date(settings.lastBackupAt) : null}
+          />
+        </div>
 
         {/* Account Info */}
         <div className="lg:col-span-2">
