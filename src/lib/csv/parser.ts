@@ -64,6 +64,7 @@ export function mapCsvToObjects<T>(
   const dataRows = rows.slice(1);
   const results: T[] = [];
   const errors: CsvParseError[] = [];
+  let failedRowsCount = 0;
 
   dataRows.forEach((row, index) => {
     const rowNumber = index + 2; // +2 because index starts at 0 and we skipped header
@@ -81,6 +82,7 @@ export function mapCsvToObjects<T>(
     if (validator) {
       const validation = validator(obj);
       if (!validation.valid) {
+        failedRowsCount++;
         validation.errors.forEach((error) => {
           errors.push({
             row: rowNumber,
@@ -101,7 +103,7 @@ export function mapCsvToObjects<T>(
     errors,
     totalRows: dataRows.length,
     successCount: results.length,
-    failCount: errors.length,
+    failCount: failedRowsCount,
   };
 }
 
