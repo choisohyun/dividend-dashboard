@@ -1,23 +1,38 @@
 import { createClient } from "@supabase/supabase-js";
 import { db } from "@/lib/db";
-import { users, holdings, dividends, cashFlows, transactions } from "@/lib/db/schema";
+import {
+  users,
+  holdings,
+  dividends,
+  cashFlows,
+  transactions,
+} from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
 // Use service role key for cron jobs (bypasses RLS)
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !key) {
+    throw new Error("Missing Supabase admin credentials");
+  }
+
+  return createClient(url, key);
+}
 
 export async function performBackupForUser(userId: string) {
   try {
+    const supabaseAdmin = getAdminClient();
+
     // 1. Fetch all user data
-    const [userHoldings, userDividends, userCashFlows, userTransactions] = await Promise.all([
-      db.select().from(holdings).where(eq(holdings.userId, userId)),
-      db.select().from(dividends).where(eq(dividends.userId, userId)),
-      db.select().from(cashFlows).where(eq(cashFlows.userId, userId)),
-      db.select().from(transactions).where(eq(transactions.userId, userId)),
-    ]);
+    const [userHoldings, userDividends, userCashFlows, userTransactions] =
+      await Promise.all([
+        db.select().from(holdings).where(eq(holdings.userId, userId)),
+        db.select().from(dividends).where(eq(dividends.userId, userId)),
+        db.select().from(cashFlows).where(eq(cashFlows.userId, userId)),
+        db.select().from(transactions).where(eq(transactions.userId, userId)),
+      ]);
 
     // 2. Create backup object
     const backupData = {
@@ -64,6 +79,8 @@ export async function performBackupForUser(userId: string) {
 
 async function cleanupOldBackups(userId: string) {
   try {
+    const supabaseAdmin = getAdminClient();
+
     const { data: files } = await supabaseAdmin.storage
       .from("backups")
       .list(userId, { sortBy: { column: "created_at", order: "desc" } });
@@ -72,7 +89,7 @@ async function cleanupOldBackups(userId: string) {
 
     // Keep top 4, delete the rest
     const filesToDelete = files.slice(4).map((f) => `${userId}/${f.name}`);
-    
+
     if (filesToDelete.length > 0) {
       await supabaseAdmin.storage.from("backups").remove(filesToDelete);
     }
@@ -94,7 +111,9 @@ export async function runAutoBackup() {
     enabledUsers.map((user) => performBackupForUser(user.id))
   );
 
-  const successCount = results.filter((r) => r.status === "fulfilled" && r.value.success).length;
+  const successCount = results.filter(
+    (r) => r.status === "fulfilled" && r.value.success
+  ).length;
   const failureCount = results.length - successCount;
 
   return {
@@ -103,4 +122,3 @@ export async function runAutoBackup() {
     failed: failureCount,
   };
 }
-

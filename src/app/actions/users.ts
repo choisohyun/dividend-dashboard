@@ -15,6 +15,8 @@ export async function getUserSettings() {
       timezone: users.timezone,
       goalMonthlyDividend: users.goalMonthlyDividend,
       monthlyInvestPlan: users.monthlyInvestPlan,
+      autoBackupEnabled: users.autoBackupEnabled,
+      lastBackupAt: users.lastBackupAt,
     })
     .from(users)
     .where(eq(users.id, session.user.id))
@@ -28,6 +30,7 @@ export async function updateUserSettings(settings: {
   timezone?: string;
   goalMonthlyDividend?: number;
   monthlyInvestPlan?: number;
+  autoBackupEnabled?: boolean;
 }) {
   const session = await requireAuth();
   
