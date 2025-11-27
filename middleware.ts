@@ -35,11 +35,15 @@ export async function middleware(request: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  // Protect dashboard routes (allow public routes)
+  const path = request.nextUrl.pathname;
+
+  // Define public routes that don't require authentication
   const isPublicRoute = 
-    request.nextUrl.pathname === "/login" ||
-    request.nextUrl.pathname === "/signup" ||
-    request.nextUrl.pathname.startsWith("/auth");
+    path === "/login" ||
+    path === "/signup" ||
+    path.startsWith("/auth") ||
+    path.startsWith("/p/") ||      // Public portfolio pages
+    path.startsWith("/api/og");    // OG Image generation
 
   // Redirect to login if not authenticated and trying to access protected route
   if (!session && !isPublicRoute) {
@@ -47,8 +51,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect logged-in users away from auth pages
-  if (session && (request.nextUrl.pathname.startsWith("/login") || 
-      request.nextUrl.pathname.startsWith("/signup"))) {
+  if (session && (path.startsWith("/login") || path.startsWith("/signup"))) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
@@ -60,6 +63,3 @@ export const config = {
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
-
-
-
