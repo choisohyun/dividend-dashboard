@@ -37,6 +37,16 @@ export async function middleware(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
 
+  // Root path handling
+  if (path === "/") {
+    if (session) {
+      // If logged in, redirect to dashboard
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+    // If not logged in, show landing page (stay on /)
+    return response;
+  }
+
   // Define public routes that don't require authentication
   const isPublicRoute = 
     path === "/login" ||
@@ -45,14 +55,15 @@ export async function middleware(request: NextRequest) {
     path.startsWith("/p/") ||      // Public portfolio pages
     path.startsWith("/api/og");    // OG Image generation
 
-  // Redirect to login if not authenticated and trying to access protected route
-  if (!session && !isPublicRoute) {
+  // Protected routes check
+  // If user is accessing dashboard routes without session, redirect to login
+  if (path.startsWith("/dashboard") && !session) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   // Redirect logged-in users away from auth pages
   if (session && (path.startsWith("/login") || path.startsWith("/signup"))) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return response;
