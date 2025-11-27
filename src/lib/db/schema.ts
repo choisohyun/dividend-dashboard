@@ -17,6 +17,9 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   currency: text("currency").notNull().default("KRW"),
   timezone: text("timezone").notNull().default("Asia/Seoul"),
+  displayName: text("display_name"),
+  username: text("username").unique(),
+  isPublicProfile: boolean("is_public_profile").notNull().default(false),
   goalMonthlyDividend: integer("goal_monthly_dividend")
     .notNull()
     .default(900000),
