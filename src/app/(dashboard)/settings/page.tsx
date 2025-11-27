@@ -12,6 +12,8 @@ import { AccountInfo } from "@/components/settings/AccountInfo";
 import { DataManagement } from "@/components/settings/DataManagement";
 import { BackupSettings } from "@/components/settings/BackupSettings";
 
+import { PublicProfileSettings } from "@/components/settings/PublicProfileSettings";
+
 export default function SettingsPage() {
   const { data: settings, isLoading } = useQuery({
     queryKey: ["userSettings"],
@@ -59,6 +61,15 @@ export default function SettingsPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
+        {/* Public Profile Settings */}
+        <div className="lg:col-span-2">
+          <PublicProfileSettings
+            isPublicProfile={settings?.isPublicProfile || false}
+            username={settings?.username || null}
+            displayName={settings?.displayName || null}
+          />
+        </div>
+
         {/* Goal Settings */}
         <GoalSettings
           goalMonthlyDividend={settings?.goalMonthlyDividend || 900000}
