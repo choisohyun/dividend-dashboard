@@ -5,6 +5,7 @@ import { users } from "@/lib/db/schema";
 import { requireAuth } from "@/lib/auth/session";
 import { eq, and, ne } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { getPlanLimits } from "@/lib/config/subscription";
 
 export async function getUserSettings() {
   const session = await requireAuth();
@@ -20,6 +21,7 @@ export async function getUserSettings() {
       isPublicProfile: users.isPublicProfile,
       username: users.username,
       displayName: users.displayName,
+      tier: users.tier,
     })
     .from(users)
     .where(eq(users.id, session.user.id))
@@ -40,6 +42,19 @@ export async function updateUserSettings(settings: {
 }) {
   const session = await requireAuth();
   
+  // Check subscription limits for auto backup
+  if (settings.autoBackupEnabled) {
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, session.user.id),
+      columns: { tier: true },
+    });
+    
+    const plan = getPlanLimits(user?.tier || "FREE");
+    if (!plan.features.autoBackup) {
+      throw new Error("자동 백업은 Pro 플랜 전용 기능입니다.");
+    }
+  }
+
   if (settings.username) {
     // Check for username collision, excluding current user
     const existing = await db.query.users.findFirst({

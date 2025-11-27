@@ -1,11 +1,12 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { transactions } from "@/lib/db/schema";
+import { transactions, holdings, users } from "@/lib/db/schema";
 import { requireAuth } from "@/lib/auth/session";
 import { eq, and, gte, lte, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import type { InsertTransaction } from "@/lib/db/schema";
+import { getPlanLimits } from "@/lib/config/subscription";
 
 export async function getAllTransactions() {
   const session = await requireAuth();
@@ -52,6 +53,37 @@ export async function getTransactionById(id: string) {
 export async function createTransaction(data: Omit<InsertTransaction, "userId">) {
   const session = await requireAuth();
   
+  // Check holdings limit if it's a new symbol
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, session.user.id),
+    columns: { tier: true },
+  });
+  
+  const plan = getPlanLimits(user?.tier || "FREE");
+  
+  if (plan.limits.holdings !== Infinity) {
+    // Check if user already holds this symbol
+    const existingHolding = await db.query.holdings.findFirst({
+      where: and(
+        eq(holdings.userId, session.user.id),
+        eq(holdings.symbol, data.symbol)
+      ),
+    });
+
+    if (!existingHolding) {
+      // If not, check if they have reached the limit
+      const holdingsCount = await db
+        .select({ count: holdings.id })
+        .from(holdings)
+        .where(eq(holdings.userId, session.user.id))
+        .then((res) => res.length);
+      
+      if (holdingsCount >= plan.limits.holdings) {
+        throw new Error(`무료 플랜은 최대 ${plan.limits.holdings}개의 종목만 보유할 수 있습니다.`);
+      }
+    }
+  }
+
   const result = await db
     .insert(transactions)
     .values({
@@ -93,4 +125,3 @@ export async function deleteTransaction(id: string) {
   
   return { success: true };
 }
-
